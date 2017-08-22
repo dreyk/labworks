@@ -6,14 +6,9 @@ storage:
 tutorial: https://github.com/dreyk/labworks
 tutorial_path: /labworks/src
 data_path: data
-tensorflow_version:
-  value: "1.2.0"
-  wizard:
-    name: "Tensorflow version"
-    kind: select
-    options:
-    - "1.2.0"
-    - "latest"
+
+tensorflow_version: "1.2.0"
+
 python_version:
   value: "2"
   wizard:
