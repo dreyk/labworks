@@ -32,13 +32,13 @@ spec:
       allowFail: true
       {{- if eq .python_version.value "3" }}
       images:
-        gpu: "tensorflow/tensorflow:{{.tensorflow_version}}-gpu-py3"
-        cpu: "tensorflow/tensorflow:{{.tensorflow_version}}-py3"
+        gpu: "tensorflow/tensorflow:{{.tensorflow_version.value}}-gpu-py3"
+        cpu: "tensorflow/tensorflow:{{.tensorflow_version.value}}-py3"
       {{- end }}
       {{- if eq .python_version.value "2" }}
       images:
-        gpu: "tensorflow/tensorflow:{{.tensorflow_version}}-gpu"
-        cpu: "tensorflow/tensorflow:{{.tensorflow_version}}"
+        gpu: "tensorflow/tensorflow:{{.tensorflow_version.value}}-gpu"
+        cpu: "tensorflow/tensorflow:{{.tensorflow_version.value}}"
       {{- end }}
       command: python
       args: hello.py
@@ -67,13 +67,13 @@ spec:
       allowFail: true
       {{- if eq .python_version.value "3" }}
       images:
-        gpu: "tensorflow/tensorflow:{{.tensorflow_version}}-gpu-py3"
-        cpu: "tensorflow/tensorflow:{{.tensorflow_version}}-py3"
+        gpu: "tensorflow/tensorflow:{{.tensorflow_version.value}}-gpu-py3"
+        cpu: "tensorflow/tensorflow:{{.tensorflow_version.value}}-py3"
       {{- end }}
       {{- if eq .python_version.value "2" }}
       images:
-        gpu: "tensorflow/tensorflow:{{.tensorflow_version}}-gpu"
-        cpu: "tensorflow/tensorflow:{{.tensorflow_version}}"
+        gpu: "tensorflow/tensorflow:{{.tensorflow_version.value}}-gpu"
+        cpu: "tensorflow/tensorflow:{{.tensorflow_version.value}}"
       {{- end }}
       command: python
       args: hello.py
@@ -96,12 +96,12 @@ spec:
   uix:
   - name: jupyter
     displayName: Jupyter
-    {{- if eq .python_version.version "3"}}
+    {{- if eq .python_version.value "3"}}
     images:
       gpu: "kuberlab/mlboard-jupyter-gpu:latest-py3"
       cpu: "kuberlab/mlboard-jupyter:latest-py3"
     {{- end }}
-    {{- if eq .python_version.version "2"}}
+    {{- if eq .python_version.value "2"}}
     images:
       gpu: "kuberlab/mlboard-jupyter-gpu:latest"
       cpu: "kuberlab/mlboard-jupyter:latest"
