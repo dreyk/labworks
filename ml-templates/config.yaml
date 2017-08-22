@@ -1,0 +1,167 @@
+kind: MLApp
+metadata:
+  name: tensorflow
+spec:
+  package_manager: "pip{{.python_version.value}}"
+  packages:
+    - names:
+      {{- range $i, $value := .packages }}
+      - "{{ $value }}"
+      {{- end }}
+      manager: "pip{{.python_version.value}}"
+  tasks:
+  - name: prepare-data
+    resources:
+    - name: upload
+      replicas: 1
+      restartPolicy: Never
+      maxRestartCount: 1
+      allowFail: true
+      images:
+        cpu: busybox
+      command: "echo \"Uploading Data\";echo \"Done!!!\""
+      workdir: "$DATA_DIR"
+      volumes:
+      - name: data
+  - name: lab-1
+    resources:
+    - name: task
+      replicas: 1
+      restartPolicy: Never
+      maxRestartCount: 0
+      allowFail: true
+      {{- if eq .python_version.value "3" }}
+      images:
+        gpu: "tensorflow/tensorflow:{{.tensorflow_version}}-gpu-py3"
+        cpu: "tensorflow/tensorflow:{{.tensorflow_version}}-py3"
+      {{- end }}
+      {{- if eq .python_version.value "2" }}
+      images:
+        gpu: "tensorflow/tensorflow:{{.tensorflow_version}}-gpu"
+        cpu: "tensorflow/tensorflow:{{.tensorflow_version}}"
+      {{- end }}
+      command: python
+      args: hello.py
+      workdir: "$SRC_DIR"
+      resources:
+        accelerators:
+          gpu: 0
+          dedicated_gpu: true
+        requests:
+          cpu: 100m
+          memory: 64Mi
+        limits:
+          cpu: 1000m
+          memory: 1Gi
+      volumes:
+      - name: lib
+      - name: training
+      - name: src
+      - name: data
+  - name: lab-2
+    resources:
+    - name: task
+      replicas: 1
+      restartPolicy: Never
+      maxRestartCount: 0
+      allowFail: true
+      {{- if eq .python_version.value "3" }}
+      images:
+        gpu: "tensorflow/tensorflow:{{.tensorflow_version}}-gpu-py3"
+        cpu: "tensorflow/tensorflow:{{.tensorflow_version}}-py3"
+      {{- end }}
+      {{- if eq .python_version.value "2" }}
+      images:
+        gpu: "tensorflow/tensorflow:{{.tensorflow_version}}-gpu"
+        cpu: "tensorflow/tensorflow:{{.tensorflow_version}}"
+      {{- end }}
+      command: python
+      args: hello.py
+      workdir: "$SRC_DIR"
+      resources:
+        accelerators:
+          gpu: 0
+          dedicated_gpu: true
+        requests:
+          cpu: 100m
+          memory: 64Mi
+        limits:
+          cpu: 1000m
+          memory: 1Gi
+      volumes:
+      - name: lib
+      - name: training
+      - name: src
+      - name: data
+  uix:
+  - name: jupyter
+    displayName: Jupyter
+    {{- if eq .python_version.version "3"}}
+    images:
+      gpu: "kuberlab/mlboard-jupyter-gpu:latest-py3"
+      cpu: "kuberlab/mlboard-jupyter:latest-py3"
+    {{- end }}
+    {{- if eq .python_version.version "2"}}
+    images:
+      gpu: "kuberlab/mlboard-jupyter-gpu:latest"
+      cpu: "kuberlab/mlboard-jupyter:latest"
+    {{- end }}
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+    ports:
+    - port: 8888
+      targetPort: 8888
+      protocol: TCP
+      name: http
+    volumes:
+    - name: lib
+      mountPath: /notebooks/lib
+    - name: training
+      mountPath: /notebooks/training
+    - name: data
+      mountPath: /notebooks/data
+    - name: src
+      mountPath: /notebooks
+    - name: tutorial
+      mountPath: /notebooks/tutorial
+  volumes:
+  - isLibDir: false
+    isTrainLogDir: true
+    mountPath: /training
+    name: training
+    clusterStorage: {{ .storage }}
+    subPath: training
+
+  - isLibDir: false
+    isTrainLogDir: false
+    mountPath: /src
+    name: src
+    clusterStorage: {{ .storage }}
+    subPath: src
+
+  - gitRepo:
+      repository: {{ .tutorial }}
+    isLibDir: false
+    isTrainLogDir: false
+    mountPath: /tutorial
+    name: tutorial
+    subPath: "{{ .tutorial_path }}"
+
+  - isLibDir: true
+    isTrainLogDir: false
+    mountPath: /workspace/lib
+    name: lib
+    clusterStorage: {{ .storage }}
+    subPath: lib
+
+  - isLibDir: false
+    isTrainLogDir: false
+    mountPath: /data
+    name: data
+    clusterStorage: {{ .storage }}
+    subPath: {{ .data_path }}
