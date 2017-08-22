@@ -7,7 +7,8 @@ tutorial: https://github.com/dreyk/labworks
 tutorial_path: /labworks/src
 data_path: data
 
-tensorflow_version: "1.2.0"
+tensorflow_version:
+  value: "1.2.0"
 
 python_version:
   value: "2"
