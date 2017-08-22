@@ -134,14 +134,14 @@ spec:
     isTrainLogDir: true
     mountPath: /training
     name: training
-    clusterStorage: {{ .storage }}
+    clusterStorage: {{ .storage.value }}
     subPath: training
 
   - isLibDir: false
     isTrainLogDir: false
     mountPath: /src
     name: src
-    clusterStorage: {{ .storage }}
+    clusterStorage: {{ .storage.value }}
     subPath: src
 
   - gitRepo:
@@ -156,12 +156,12 @@ spec:
     isTrainLogDir: false
     mountPath: /workspace/lib
     name: lib
-    clusterStorage: {{ .storage }}
+    clusterStorage: {{ .storage.value }}
     subPath: lib
 
   - isLibDir: false
     isTrainLogDir: false
     mountPath: /data
     name: data
-    clusterStorage: {{ .storage }}
+    clusterStorage: {{ .storage.value }}
     subPath: {{ .data_path }}
